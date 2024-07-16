@@ -70,4 +70,4 @@ if __name__ == "__main__":
     box1.pop(0)
     box1.append(555)
     print(box1)
-    print(np.eye(6) * 0.1)
+    print(np.eye(6) * 1)

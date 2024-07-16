@@ -49,8 +49,8 @@ P = np.eye(6)
 
 if __name__ == "__main__":
     # 定义视频路径、标签路径和文件名
-    video_path = "./data/testvideo1.mp4"
-    label_path = "./data/labels"
+    video_path = "../data/testvideo1.mp4"
+    label_path = "../data/labels"
     file_name = "testvideo1"
     # 打开视频文件
     cap = cv2.VideoCapture(video_path)
@@ -135,13 +135,6 @@ if __name__ == "__main__":
             # plot_one_box(box_posterior, frame, color=(255, 255, 255), target=False)
             box_center = (
                 (int(box_posterior[0] + box_posterior[2]) // 2), int((box_posterior[1] + box_posterior[3]) // 2))
-
-
-        # 在图像上添加文本信息
-        cv2.putText(frame, "ALL BOXES(Green)", (25, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 200, 0), 2)
-        cv2.putText(frame, "TRACKED BOX(Red)", (25, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        cv2.putText(frame, "Last frame best estimation(White)", (25, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                    (255, 255, 255), 2)
 
         # 显示图像
         cv2.imshow('track', frame)
