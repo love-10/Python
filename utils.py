@@ -1,5 +1,5 @@
 import cv2
-
+import numpy as np
 
 # 将左上右下表示的框转换为中心点坐标和宽高表示的框
 def xyxy_to_xywh(xyxy):
@@ -70,3 +70,4 @@ if __name__ == "__main__":
     box1.pop(0)
     box1.append(555)
     print(box1)
+    print(np.eye(6) * 0.1)
