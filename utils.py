@@ -19,33 +19,6 @@ def plot_one_box(xyxy, img, color=(0, 200, 0), target=False):
     cv2.rectangle(img, xy1, xy2, color, 1, cv2.LINE_AA)  # filled
 
 
-# 更新轨迹列表
-def updata_trace_list(box_center, trace_list, max_list_len=50):
-    if len(trace_list) <= max_list_len:
-        trace_list.append(box_center)
-    else:
-        trace_list.pop(0)
-        trace_list.append(box_center)
-    return trace_list
-
-
-# 绘制轨迹
-def draw_trace(img, trace_list):
-    """
-    更新trace_list,绘制trace
-    :param trace_list:
-    :param max_list_len:
-    :return:
-    """
-    for i, item in enumerate(trace_list):
-
-        if i < 1:
-            continue
-        cv2.line(img,
-                 (trace_list[i][0], trace_list[i][1]), (trace_list[i - 1][0], trace_list[i - 1][1]),
-                 (255, 255, 0), 3)
-
-
 # 计算IOU（交并比）
 def cal_iou(box1, box2):
     """
@@ -75,21 +48,6 @@ def cal_iou(box1, box2):
     # 计算iou
     iou = intersection / union
     return iou
-
-
-# 计算两个中心点之间的距离
-def cal_distance(box1, box2):
-    """
-    计算两个box中心点的距离
-    :param box1: xyxy 左上右下
-    :param box2: xyxy
-    :return:
-    """
-    center1 = ((box1[0] + box1[2]) // 2, (box1[1] + box1[3]) // 2)
-    center2 = ((box2[0] + box2[2]) // 2, (box2[1] + box2[3]) // 2)
-    dis = ((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2) ** 0.5
-
-    return dis
 
 
 # 将中心点坐标和宽高表示的框转换为左上右下表示的框
