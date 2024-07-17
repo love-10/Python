@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-from utils import plot_one_box, cal_iou, xyxy_to_xywh, xywh_to_xyxy, updata_trace_list, draw_trace
+from utils import plot_one_box, cal_iou, xyxy_to_xywh, xywh_to_xyxy
 
 # 单目标跟踪
 # 检测器获得检测框，全程只赋予1个ID，有两个相同的东西进来时，不会丢失唯一跟踪目标
@@ -42,8 +42,6 @@ Q = np.eye(6) * 0.1
 # 观测噪声来自于检测框丢失、重叠等
 R = np.eye(6) * 1
 
-# 控制输入矩阵B
-B = None
 # 状态估计协方差矩阵P初始化
 P = np.eye(6)
 
@@ -54,13 +52,6 @@ if __name__ == "__main__":
     file_name = "testvideo1"
     # 打开视频文件
     cap = cv2.VideoCapture(video_path)
-    # cv2.namedWindow("track", cv2.WINDOW_NORMAL)
-    # 是否保存输出视频
-    SAVE_VIDEO = False
-    # 如果需要保存输出视频，设置视频编码器和帧率
-    if SAVE_VIDEO:
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('kalman_output.avi', fourcc, 20, (768, 576))
 
     # ---------状态初始化----------------------------------------
     # 初始化状态变量
@@ -68,7 +59,6 @@ if __name__ == "__main__":
     X_posterior = np.array(initial_state)
     P_posterior = np.array(P)
     Z = np.array(initial_state)
-    trace_list = []  # 用于保存目标box的轨迹
 
     while (True):
         # 逐帧捕获视频
@@ -103,7 +93,7 @@ if __name__ == "__main__":
                 plot_one_box(target_box, frame, target=True)
                 xywh = xyxy_to_xywh(target_box)
                 box_center = (int((target_box[0] + target_box[2]) // 2), int((target_box[1] + target_box[3]) // 2))
-                trace_list = updata_trace_list(box_center, trace_list, 100)
+
                 cv2.putText(frame, "Tracking", (int(target_box[0]), int(target_box[1] - 5)), cv2.FONT_HERSHEY_SIMPLEX,
                             0.7,
                             (255, 0, 0), 2)
@@ -143,23 +133,10 @@ if __name__ == "__main__":
             # plot_one_box(box_posterior, frame, color=(255, 255, 255), target=False)
             box_center = (
                 (int(box_posterior[0] + box_posterior[2]) // 2), int((box_posterior[1] + box_posterior[3]) // 2))
-            trace_list = updata_trace_list(box_center, trace_list, 20)
-            cv2.putText(frame, "Lost", (box_center[0], box_center[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                        (255, 0, 0), 2)
 
-        draw_trace(frame, trace_list)
-
-        # 在图像上添加文本信息
-        cv2.putText(frame, "ALL BOXES(Green)", (25, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 200, 0), 2)
-        cv2.putText(frame, "TRACKED BOX(Red)", (25, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        cv2.putText(frame, "Last frame best estimation(White)", (25, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
-                    (255, 255, 255), 2)
 
         # 显示图像
         cv2.imshow('track', frame)
-        # 如果需要保存视频，将帧写入输出视频文件
-        if SAVE_VIDEO:
-            out.write(frame)
         frame_counter = frame_counter + 1
         # 检测是否按下 'q' 键，如果按下则退出循环。同时我们可以在cv2.waitKey(200)中改变数值大小来控制视频播放速度
         if cv2.waitKey(200) & 0xFF == ord('q'):

@@ -16,31 +16,6 @@ def plot_one_box(xyxy, img, color=(0, 200, 0), target=False):
         color = (0, 0, 255)
     cv2.rectangle(img, xy1, xy2, color, 1, cv2.LINE_AA)  # filled
 
-# 更新轨迹列表
-def updata_trace_list(box_center, trace_list, max_list_len=50):
-    if len(trace_list) <= max_list_len:
-        trace_list.append(box_center)
-    else:
-        trace_list.pop(0)
-        trace_list.append(box_center)
-    return trace_list
-
-# 绘制轨迹
-def draw_trace(img, trace_list):
-    """
-    更新trace_list,绘制trace
-    :param trace_list:
-    :param max_list_len:
-    :return:
-    """
-    for i, item in enumerate(trace_list):
-
-        if i < 1:
-            continue
-        cv2.line(img,
-                 (trace_list[i][0], trace_list[i][1]), (trace_list[i - 1][0], trace_list[i - 1][1]),
-                 (255, 255, 0), 3)
-
 # 计算IOU（交并比）
 def cal_iou(box1, box2):
     """
